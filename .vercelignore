@@ -1,0 +1,19 @@
+# Lo que `npm run deploy` NO sube a Vercel. Importante: la CLI de Vercel no ignora .env por
+# defecto; sin estas líneas subiría las claves. Las variables se configuran en el panel.
+.env
+.env.*
+!.env.example
+
+# Se regeneran en el build de Vercel
+node_modules
+.next
+generated
+prisma/generated
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+
+# Solo locales
+.cache
+coverage

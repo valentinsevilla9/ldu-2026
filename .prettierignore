@@ -1,0 +1,10 @@
+package-lock.json
+.next
+coverage
+next-env.d.ts
+generated
+.cache
+prisma/generated
+prisma/migrations
+# Datos abiertos descargados: compactos a propósito.
+public/data

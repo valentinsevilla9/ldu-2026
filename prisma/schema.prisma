@@ -1,0 +1,50 @@
+// Esquema canónico (SQLite). Para Postgres, scripts/db.ts deriva una copia cambiando
+// solo el `provider`, así que aquí se usan únicamente tipos que existen en ambos motores.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+// Regla «si X entonces Y» del motor (modules/rules/engine.ts). `kind` y `operator` son texto
+// por compatibilidad con Postgres; los valores válidos los garantiza zod (modules/rules/schema.ts).
+model Rule {
+  id          String   @id @default(cuid())
+  name        String
+  kind        String
+  operator    String
+  threshold   Float
+  durationMin Int      @default(0)
+  fromHour    Int      @default(0)
+  toHour      Int      @default(24)
+  cooldownMin Int      @default(60)
+  // A quién avisa la regla cuando se dispara (p. ej. «Servicios Sociales del Distrito Triana»).
+  notify      String   @default("")
+  enabled     Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// Alerta atendida. Las alertas se calculan al vuelo con el motor; aquí solo se guarda
+// cuáles ha atendido alguien. `id` = regla:sensor:minuto del disparo.
+model AlertAck {
+  id        String   @id
+  createdAt DateTime @default(now())
+}
+
+// Actuaciones del piloto aisladas por sesión y minuto del reloj simulado.
+model PilotAction {
+  id        String   @id @default(cuid())
+  runId     String
+  operation String
+  targetId  String
+  minute    Int
+  createdAt DateTime @default(now())
+
+  @@unique([runId, operation, targetId, minute])
+  @@index([runId, minute])
+}
